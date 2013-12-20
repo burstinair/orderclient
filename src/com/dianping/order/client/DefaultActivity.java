@@ -6,8 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONTokener;
 
-public class DefaultActivity extends Activity {
+public class DefaultActivity extends Activity implements HttpHelper.HttpCallback {
 
     private static final int REQUEST_CODE_CAMERA = 10;
     private static final int REQUEST_CODE_RESOLVE = 20;
@@ -22,8 +25,9 @@ public class DefaultActivity extends Activity {
     }
 
     public void onClick(View view) {
-        Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
-        startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
+        HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
+        //Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
+        //startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
     }
 
     @Override
@@ -34,5 +38,10 @@ public class DefaultActivity extends Activity {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
             }
         }
+    }
+
+    @Override
+    public void handle(JSONTokener result, int requestCode) {
+        Toast.makeText(this, result.toString(), Toast.LENGTH_SHORT).show();
     }
 }
