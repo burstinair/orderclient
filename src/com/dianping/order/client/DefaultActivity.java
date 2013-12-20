@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 
 public class DefaultActivity extends Activity {
 
@@ -32,6 +33,7 @@ public class DefaultActivity extends Activity {
             if(requestCode == REQUEST_CODE_CAMERA) {
                 byte[] result = (byte[]) data.getExtras().get("data");
                 Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
+                ((ImageView)findViewById(R.id.imageView)).setImageBitmap(Blur.BoxBlurFilter(bitmap));
             }
         }
     }

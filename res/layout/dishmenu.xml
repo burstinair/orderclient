@@ -1,8 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true" >
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical" >
 
-</LinearLayout>
+        <com.dianping.t.widget.TableView
+                android:id="@+id/buy_info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+            <LinearLayout
+                    style="@style/SingleLineTableItemWithPadding"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dip"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="菜名"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/deal_dark_black"
+                        android:textSize="@dimen/text_size_list" />
+
+                <TextView
+                        android:id="@+id/dishname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/deal_dark_black"
+                        android:textSize="@dimen/text_size_list" />
+            </LinearLayout>
+
+            <LinearLayout
+                    style="@style/SingleLineTableItemWithPadding"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dip"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="单价"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/deal_dark_black"
+                        android:textSize="@dimen/text_size_list" />
+
+                <TextView
+                        android:id="@+id/price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/deal_dark_black"
+                        android:textSize="@dimen/text_size_list" />
+            </LinearLayout>
+
+            <LinearLayout
+                    style="@style/SingleLineTableItemWithPadding"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dip"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="数量"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/deal_dark_black"
+                        android:textSize="@dimen/text_size_list" />
+
+                <Button
+                        android:id="@+id/btn_subtraction"
+                        android:layout_width="53dip"
+                        android:layout_height="35dip"
+                        android:background="@drawable/common_detail_btn_minus" />
+
+                <TextView
+                        android:id="@+id/edit_num"
+                        android:layout_width="66dip"
+                        android:layout_height="35dip"
+                        android:layout_marginBottom="6dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/edit_price_bg"
+                        android:gravity="center"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/deal_dark_black"
+                        android:textSize="@dimen/text_size_list" />
+
+                <Button
+                        android:id="@+id/btn_add"
+                        android:layout_width="53dip"
+                        android:layout_height="35dip"
+                        android:background="@drawable/common_detail_btn_plus" />
+            </LinearLayout>
+
+            <LinearLayout
+                    style="@style/SingleLineTableItemWithPadding"
+                    android:layout_height="55dip"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal" >
+
+                <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="总价"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/deal_dark_black"
+                        android:textSize="@dimen/text_size_list" />
+
+                <TextView
+                        android:id="@+id/sum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/light_orange"
+                        android:textSize="@dimen/text_size_list" />
+            </LinearLayout>
+
+            <LinearLayout
+                    style="@style/SingleLineTableItem"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical" >
+
+                <include layout="@layout/refund_support_layout" />
+            </LinearLayout>
+        </com.dianping.t.widget.TableView>
+
+        <Button
+                android:id="@+id/submit"
+                style="@style/NovaTuanWeightButton"
+                android:layout_width="match_parent"
+                android:text="提交订单" />
+    </LinearLayout>
+
+</ScrollView>

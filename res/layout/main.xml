@@ -16,5 +16,10 @@
             android:id="@+id/btnSubmit" android:layout_gravity="left|center_vertical"
             android:onClick="onClick"
             />
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView"
+            ></ImageView>
 </LinearLayout>
 
