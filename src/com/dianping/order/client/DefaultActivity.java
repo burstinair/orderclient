@@ -25,9 +25,9 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
     }
 
     public void onClick(View view) {
-        HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
-        //Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
-        //startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
+        //HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
+        Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
+        startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
     }
 
     @Override

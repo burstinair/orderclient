@@ -38,41 +38,30 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
         cameraView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         cameraView.getHolder().addCallback(this);
+        camera = Camera.open();
     }
 
     private Camera camera;
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        stopAndReleaseCamera();
-        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        camera = Camera.open();
         try {
             camera.setPreviewDisplay(surfaceHolder);
+            camera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        camera.startPreview();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
-        Camera.Parameters parameters = camera.getParameters();
-        parameters.setPreviewSize(width, height);
-        parameters.setPreviewFormat(format);
-        camera.setParameters(parameters);
-    }
-
-    private void stopAndReleaseCamera() {
-        if(camera != null) {
-            camera.stopPreview();
-            camera.release();
-            camera = null;
-        }
+        //Camera.Parameters parameters = camera.getParameters();
+        //parameters.setPreviewSize(width, height);
+        //parameters.setPreviewFormat(format);
+        //camera.setParameters(parameters);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        stopAndReleaseCamera();
     }
 }
