@@ -10,7 +10,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
-public class DefaultActivity extends Activity implements HttpHelper.HttpCallback {
+public class DefaultActivity extends Activity implements HttpHelper.HttpCallback<JSONTokener> {
 
     private static final int REQUEST_CODE_CAMERA = 10;
     private static final int REQUEST_CODE_RESOLVE = 20;

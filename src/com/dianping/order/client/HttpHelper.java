@@ -6,7 +6,9 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ByteArrayEntity;
 import org.json.JSONTokener;
 
 import java.io.ByteArrayOutputStream;
@@ -44,8 +46,8 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
         callback.handle(null, requestCode);
     }
 
-    public interface HttpCallback {
-        void handle(JSONTokener result, int requestCode);
+    public interface HttpCallback<T> {
+        void handle(T result, int requestCode);
     }
 
     private static final String USER_AGENT = "OrderApi 1.0 (com.dianping.order 1.0)";
@@ -75,25 +77,34 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
     }
 
     private HttpUriRequest request;
-    private HttpCallback callback;
+    private HttpCallback<JSONTokener> callback;
     private int requestCode;
 
-    public HttpHelper(HttpUriRequest request, HttpCallback callback, int requestCode) {
+    public HttpHelper(HttpUriRequest request, HttpCallback<JSONTokener> callback, int requestCode) {
         this.request = request;
         this.callback = callback;
         this.requestCode = requestCode;
     }
 
-    public static void rec(HttpCallback callback, int requestCode) {
+    public static void rec(HttpCallback<JSONTokener> callback, int requestCode) {
         HttpUriRequest request = new HttpGet(buildUri("/api/rec?a=34&b=56"));
         new HttpHelper(request, callback, requestCode).execute();
     }
 
-    public static List<DishMenu> resolve(byte[] photo) {
-        return null;
+    public static void resolve(final HttpCallback<List<DishMenu>> callback, int requestCode, byte[] photo) {
+        HttpPost request = new HttpPost(buildUri("/api/resolve"));
+        request.setEntity(new ByteArrayEntity(photo));
+        new HttpHelper(request, new HttpCallback<JSONTokener>() {
+            @Override
+            public void handle(JSONTokener result, int requestCode) {
+                callback.handle(/* TODO */null, requestCode);
+            }
+        }, requestCode).execute();
     }
 
-    public static void submit(Map<String, Integer> selectResult) {
-
+    public static void submit(final HttpCallback<JSONTokener> callback, int requestCode, Map<String, Integer> selectResult) {
+        HttpUriRequest request = new HttpPost();
+        //TODO
+        new HttpHelper(request, callback, requestCode).execute();
     }
 }
