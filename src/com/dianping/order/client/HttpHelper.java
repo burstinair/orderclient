@@ -136,6 +136,7 @@ public class HttpHelper extends AsyncTask<Void, Void, byte[]> {
                         for(int i = 0, l = resultArray.length(); i < l; ++i) {
                             JSONObject dishMenuRaw = resultArray.getJSONObject(i);
                             DishMenu dishMenu = new DishMenu();
+                            dishMenu.setId(dishMenuRaw.getInt("id"));
                             dishMenu.setName(dishMenuRaw.getString("name"));
                             dishMenu.setPrice(dishMenuRaw.getDouble("price"));
                             result.add(dishMenu);

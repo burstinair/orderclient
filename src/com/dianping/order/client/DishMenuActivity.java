@@ -105,7 +105,7 @@ public class DishMenuActivity extends Activity {
         tv2.setWidth(w * part[1]);
         tv3.setWidth(w * part[2]);
 
-        initDatas();
+        initData();
 
         listview = (ListView) findViewById(R.id.listView1);  //
         mAdapter = new mBaseAdapter();
@@ -114,14 +114,16 @@ public class DishMenuActivity extends Activity {
         mInflate = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
     }
 
-    //初始化listview要用到的数据
-    public void initDatas() {
+    //初始化listView要用到的数据
+    public void initData() {
         listData = new ArrayList<Map<String, String>>();
-        for (int j = 0; j < 30; j++) {
+
+        List<DishMenu> dishMenus = DefaultActivity.getInstance().getResolveResult();
+        for (DishMenu dishMenu : dishMenus) {
             map = new HashMap<String, String>();
-            map.put("test1", "haha" + j);
-            map.put("test2", "8" + j);
-            map.put("test3", "+-" + j);
+            map.put("test1", dishMenu.getName());
+            map.put("test2", Double.toString(dishMenu.getPrice()));
+            map.put("test3", Integer.toString(dishMenu.getCount()));
             listData.add(map);
         }
     }
