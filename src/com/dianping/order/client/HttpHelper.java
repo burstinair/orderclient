@@ -70,7 +70,12 @@ public class HttpHelper extends AsyncTask<Void, Void, byte[]> {
 
     static {
         Properties properties = new Properties();
-        InputStream inputStream = HttpHelper.class.getResourceAsStream("/assets/settings.properties");
+        InputStream inputStream;
+        if(BuildConfig.DEBUG) {
+            inputStream = HttpHelper.class.getResourceAsStream("/assets/settings-debug.properties");
+        } else {
+            inputStream = HttpHelper.class.getResourceAsStream("/assets/settings.properties");
+        }
         try {
             properties.load(inputStream);
         } catch (IOException e) {
