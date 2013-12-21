@@ -16,17 +16,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author zhongkai.zhao
  *         13-12-21 上午12:32
  */
-public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
+public class HttpHelper extends AsyncTask<Void, Void, HttpResponse> {
+
+    private static final Executor EXECUTOR = Executors.newCachedThreadPool();
 
     @Override
-    protected HttpResponse doInBackground(String... strings) {
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
+
+    @Override
+    protected HttpResponse doInBackground(Void... voids) {
         try {
-            return HTTP_CLIENT.execute(HTTP_HOST, request);
+            HttpClient httpClient = AndroidHttpClient.newInstance(USER_AGENT);
+            HttpHost httpHost = new HttpHost(HOST_NAME, HOST_PORT);
+            return httpClient.execute(httpHost, request);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,13 +49,14 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
     protected void onPostExecute(HttpResponse response) {
         try {
             callback.handle(new JSONTokener(readFully(response.getEntity().getContent())), requestCode);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             callback.handle(null, requestCode);
         }
         request = null;
         callback = null;
         requestCode = 0;
+        super.onPostExecute(response);
         cancel(true);
     }
 
@@ -51,12 +64,22 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
         void handle(T result, int requestCode);
     }
 
-    private static final String USER_AGENT = "OrderApi 1.0 (com.dianping.order 1.0)";
-    private static final String HOST_NAME = "192.168.56.1";
-    private static final int HOST_PORT = 8321;
+    private static final String USER_AGENT;
+    private static final String HOST_NAME;
+    private static final int HOST_PORT;
 
-    private static final HttpClient HTTP_CLIENT = AndroidHttpClient.newInstance(USER_AGENT);
-    private static final HttpHost HTTP_HOST = new HttpHost(HOST_NAME, HOST_PORT);
+    static {
+        Properties properties = new Properties();
+        InputStream inputStream = HttpHelper.class.getResourceAsStream("/assets/settings.properties");
+        try {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        USER_AGENT = properties.getProperty("userAgent");
+        HOST_NAME = properties.getProperty("hostName");
+        HOST_PORT = Integer.parseInt(properties.getProperty("hostPort"));
+    }
 
     private static String readFully(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -89,7 +112,7 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
 
     public static void rec(HttpCallback<JSONTokener> callback, int requestCode) {
         HttpUriRequest request = new HttpGet(buildUri("/api/rec?a=34&b=56"));
-        new HttpHelper(request, callback, requestCode).execute();
+        new HttpHelper(request, callback, requestCode).executeOnExecutor(EXECUTOR);
     }
 
     public static void resolve(final HttpCallback<List<DishMenu>> callback, int requestCode, byte[] photo) {
@@ -100,12 +123,12 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
             public void handle(JSONTokener result, int requestCode) {
                 callback.handle(/* TODO */null, requestCode);
             }
-        }, requestCode).execute();
+        }, requestCode).executeOnExecutor(EXECUTOR);
     }
 
     public static void submit(final HttpCallback<JSONTokener> callback, int requestCode, Map<String, Integer> selectResult) {
         HttpUriRequest request = new HttpPost();
         //TODO
-        new HttpHelper(request, callback, requestCode).execute();
+        new HttpHelper(request, callback, requestCode).executeOnExecutor(EXECUTOR);
     }
 }

@@ -25,9 +25,10 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
     }
 
     public void onClick(View view) {
-        //HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
-        Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
-        startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
+        //FIXME
+        HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
+        //Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
+        //startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
     }
 
     @Override
@@ -36,6 +37,8 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
             if(requestCode == REQUEST_CODE_CAMERA) {
                 byte[] result = (byte[]) data.getExtras().get("data");
                 Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
+                //TODO
+                HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
             }
         }
     }
