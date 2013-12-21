@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -40,7 +43,7 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
                 HttpHelper.resolve(this, REQUEST_CODE_RESOLVE, result);
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
-                ((ImageView)findViewById(R.id.imageView)).setImageBitmap(Blur.BoxBlurFilter(bitmap));
+                findViewById(R.id.rootli).setBackground(new BitmapDrawable(getResources(), Blur.BoxBlurFilter(bitmap)));
             }
         }
     }

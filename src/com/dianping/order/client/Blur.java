@@ -78,7 +78,7 @@ public class Blur {
     /** 竖直方向模糊度 */
     private static final float vRadius = 10;
     /** 模糊迭代度 */
-    private static final int iterations = 10;
+    private static final int iterations = 1;
     /**
      * 高斯模糊
      */
