@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">orderclient</string>
     <string name="submit">确定</string>
+    <string name="orderSubmit">提交订单</string>
+    <string name="startTake">点击按钮开始拍</string>
+    <string name="take">拍</string>
 </resources>
