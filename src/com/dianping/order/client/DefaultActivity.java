@@ -6,9 +6,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONTokener;
 import android.widget.ImageView;
 
-public class DefaultActivity extends Activity {
+import java.util.List;
+
+public class DefaultActivity extends Activity implements HttpHelper.HttpCallback<List<DishMenu>> {
 
     private static final int REQUEST_CODE_CAMERA = 10;
     private static final int REQUEST_CODE_RESOLVE = 20;
@@ -36,5 +41,10 @@ public class DefaultActivity extends Activity {
                 ((ImageView)findViewById(R.id.imageView)).setImageBitmap(Blur.BoxBlurFilter(bitmap));
             }
         }
+    }
+
+    @Override
+    public void handle(List<DishMenu> result, int requestCode) {
+        Toast.makeText(this, "suc", Toast.LENGTH_SHORT);
     }
 }
