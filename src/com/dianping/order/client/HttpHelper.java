@@ -4,10 +4,12 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -125,15 +127,55 @@ public class HttpHelper extends AsyncTask<Void, Void, byte[]> {
             @Override
             public void handle(JSONTokener raw) {
                 List<DishMenu> result = new ArrayList<DishMenu>();
-                //TODO
+                try {
+                    JSONObject root = (JSONObject) raw.nextValue();
+                    if("!success".equals(root.getString("status"))) {
+                        result = null;
+                    } else {
+                        JSONArray resultArray = root.getJSONArray("result");
+                        for(int i = 0, l = resultArray.length(); i < l; ++i) {
+                            JSONObject dishMenuRaw = resultArray.getJSONObject(i);
+                            DishMenu dishMenu = new DishMenu();
+                            dishMenu.setName(dishMenuRaw.getString("name"));
+                            dishMenu.setPrice(dishMenuRaw.getDouble("price"));
+                            result.add(dishMenu);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    result = null;
+                }
                 callback.handle(result);
             }
         }).executeOnExecutor(EXECUTOR);
     }
 
-    public static void submit(final HttpCallback<JSONTokener> callback, int requestCode, Map<String, Integer> selectResult) {
-        HttpUriRequest request = new HttpPost();
-        //TODO
-        new HttpHelper(request, callback).executeOnExecutor(EXECUTOR);
+    public static void submit(final HttpCallback<String> callback, List<DishMenu> selectResult) {
+        HttpPost request = new HttpPost(buildUri("/api/submit"));
+        try {
+            JSONArray parameter = new JSONArray();
+            for(DishMenu dishMenu : selectResult) {
+                JSONObject dishMenuParam = new JSONObject();
+                dishMenuParam.put("id", dishMenu.getId());
+                dishMenuParam.put("name", dishMenu.getName());
+                dishMenuParam.put("count", dishMenu.getCount());
+                parameter.put(dishMenuParam);
+            }
+            request.setEntity(new StringEntity(parameter.toString(), "UTF-8"));
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
+        new HttpHelper(request, new HttpCallback<JSONTokener>() {
+            @Override
+            public void handle(JSONTokener raw) {
+                try {
+                    JSONObject root = (JSONObject) raw.nextValue();
+                    callback.handle(root.getString("status"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    callback.handle(null);
+                }
+            }
+        }).executeOnExecutor(EXECUTOR);
     }
 }

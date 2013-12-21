@@ -6,9 +6,18 @@ package com.dianping.order.client;
  */
 public class DishMenu {
 
-    private String title;
+    private int id;
+    private String name;
     private double price;
     private int count = 0;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void addCount() {
         this.count++;
@@ -20,12 +29,12 @@ public class DishMenu {
         }
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getPrice() {

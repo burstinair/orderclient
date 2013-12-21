@@ -39,10 +39,10 @@ public class DishMenuActivity extends Activity {
 
     private ListView listview;
     private mBaseAdapter mAdapter;
-    private LayoutInflater mInflater1;
-    private ListViewHander hander;
+    private LayoutInflater mInflate;
+    private ListViewHandler handler;
 
-    private List<Map<String, String>> listDatas;
+    private List<Map<String, String>> listData;
     private Map<String, String> map;
 
     @Override
@@ -111,23 +111,23 @@ public class DishMenuActivity extends Activity {
         mAdapter = new mBaseAdapter();
         listview.setAdapter(mAdapter);  //为listView添加适配器
 
-        mInflater1 = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        mInflate = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
     }
 
     //初始化listview要用到的数据
     public void initDatas() {
-        listDatas = new ArrayList<Map<String, String>>();
+        listData = new ArrayList<Map<String, String>>();
         for (int j = 0; j < 30; j++) {
             map = new HashMap<String, String>();
             map.put("test1", "haha" + j);
             map.put("test2", "8" + j);
             map.put("test3", "+-" + j);
-            listDatas.add(map);
+            listData.add(map);
         }
     }
 
     //为适配器要用到的控件对象创建类
-    private class ListViewHander {
+    private class ListViewHandler {
         TextView textview1;
         TextView textview2;
         TextView textview3;
@@ -137,7 +137,7 @@ public class DishMenuActivity extends Activity {
 
         @Override
         public int getCount() {
-            return listDatas.size();
+            return listData.size();
         }
 
         @Override
@@ -153,33 +153,33 @@ public class DishMenuActivity extends Activity {
         @Override
         public View getView(int position, View contentView, ViewGroup arg2) {
             if (contentView == null) {
-                contentView = mInflater1.inflate(R.layout.test1, null);  //使用表头布局test1.xml
-                hander = new ListViewHander();   //与表头的文本控件一一对应
-                hander.textview1 = (TextView) contentView.findViewById(R.id.textView1);
-                hander.textview2 = (TextView) contentView.findViewById(R.id.textView2);
-                hander.textview3 = (TextView) contentView.findViewById(R.id.textView3);
+                contentView = mInflate.inflate(R.layout.test1, null);  //使用表头布局test1.xml
+                handler = new ListViewHandler();   //与表头的文本控件一一对应
+                handler.textview1 = (TextView) contentView.findViewById(R.id.textView1);
+                handler.textview2 = (TextView) contentView.findViewById(R.id.textView2);
+                handler.textview3 = (TextView) contentView.findViewById(R.id.textView3);
 
-                contentView.setTag(hander);
+                contentView.setTag(handler);
 
-                hander.textview1.setWidth(w * part[0]); //记住，这里的宽度设置必须和表头文本宽度一致
-                hander.textview2.setWidth(w * part[1]);
-                hander.textview3.setWidth(w * part[2]);
+                handler.textview1.setWidth(w * part[0]); //记住，这里的宽度设置必须和表头文本宽度一致
+                handler.textview2.setWidth(w * part[1]);
+                handler.textview3.setWidth(w * part[2]);
 
-                hander.textview1.setText("");
-                hander.textview2.setText("");
-                hander.textview3.setText("");
+                handler.textview1.setText("");
+                handler.textview2.setText("");
+                handler.textview3.setText("");
 
             } else {
-                hander = (ListViewHander) contentView.getTag();
+                handler = (ListViewHandler) contentView.getTag();
             }
 
             //为listview中的TextView布局控件添加内容
-            for (int j = 0; j < listDatas.size(); j++) {
+            for (int j = 0; j < listData.size(); j++) {
                 if (position == j) {
-                    map = listDatas.get(position);
-                    hander.textview1.setText("" + map.get("test1"));
-                    hander.textview2.setText("" + map.get("test2"));
-                    hander.textview3.setText("" + map.get("test3"));
+                    map = listData.get(position);
+                    handler.textview1.setText("" + map.get("test1"));
+                    handler.textview2.setText("" + map.get("test2"));
+                    handler.textview3.setText("" + map.get("test3"));
                 }
             }
 
