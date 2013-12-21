@@ -8,6 +8,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.*;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -38,7 +39,24 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
         cameraView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         cameraView.getHolder().addCallback(this);
-        camera = Camera.open();
+    }
+
+    @Override
+    public void onPause() {
+        camera.stopPreview();
+        camera.release();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        try {
+            camera = Camera.open();
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+            Toast.makeText(this, "打开相机失败 " + ex.getStackTrace(), Toast.LENGTH_LONG).show();
+        }
+        super.onResume();
     }
 
     private Camera camera;
@@ -46,8 +64,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         try {
-            camera.setPreviewDisplay(surfaceHolder);
-            camera.startPreview();
+            if(camera != null) {
+                camera.setPreviewDisplay(surfaceHolder);
+                camera.startPreview();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
