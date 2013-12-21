@@ -4,5 +4,15 @@
         <item name="android:layout_width">1dp</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:background">#dadada</item>
+    <style name="DianPingTheme">
+        <item name="android:windowNoTitle">false</item>
+        <item name="windowFrame">@drawable/screen_frame</item>
+        <item name="windowBackground">@drawable/screen_background_white</item>
+        <item name="panelForegroundColor">#FF000000</item>
+        <item name="panelBackgroundColor">#FFFFFFFF</item>
+        <item name="panelTextColor">?panelForegroundColor</item>
+        <item name="panelTextSize">14</item>
+        <item name="menuItemTextColor">?panelTextColor</item>
+        <item name="menuItemTextSize">?panelTextSize</item>
     </style>
 </resources>
