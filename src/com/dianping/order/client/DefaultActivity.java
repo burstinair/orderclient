@@ -37,6 +37,8 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
         if(resultCode == RESULT_OK) {
             if(requestCode == REQUEST_CODE_CAMERA) {
                 byte[] result = (byte[]) data.getExtras().get("data");
+                HttpHelper.resolve(this, REQUEST_CODE_RESOLVE, result);
+
                 Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
                 ((ImageView)findViewById(R.id.imageView)).setImageBitmap(Blur.BoxBlurFilter(bitmap));
             }
