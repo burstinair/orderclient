@@ -57,12 +57,6 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
     @Override
     public void handle(List<DishMenu> result) {
         resolveResult = result;
-        HttpHelper.submit(new HttpHelper.HttpCallback<String>() {
-            @Override
-            public void handle(String result) {
-                Toast.makeText(DefaultActivity.this, result, Toast.LENGTH_LONG).show();
-            }
-        }, result);
     }
 
     @Override
