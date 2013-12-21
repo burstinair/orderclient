@@ -1,12 +1,8 @@
 package com.dianping.order.client;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.*;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.*;
 import android.widget.Toast;
 
@@ -43,8 +39,10 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 
     @Override
     public void onPause() {
-        camera.stopPreview();
-        camera.release();
+        if(camera != null) {
+            camera.stopPreview();
+            camera.release();
+        }
         super.onPause();
     }
 
@@ -75,10 +73,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
-        //Camera.Parameters parameters = camera.getParameters();
-        //parameters.setPreviewSize(width, height);
-        //parameters.setPreviewFormat(format);
-        //camera.setParameters(parameters);
     }
 
     @Override

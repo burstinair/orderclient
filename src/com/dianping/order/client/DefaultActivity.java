@@ -50,6 +50,6 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
 
     @Override
     public void handle(List<DishMenu> result, int requestCode) {
-        Toast.makeText(this, "suc", Toast.LENGTH_SHORT);
+        Toast.makeText(this, "suc", Toast.LENGTH_SHORT).show();
     }
 }
