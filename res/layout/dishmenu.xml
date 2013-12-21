@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/rootli"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical" >
@@ -12,6 +13,7 @@
 
         <TextView
                 android:id="@+id/dish"
+                android:gravity="center"
                 android:layout_width="200dip"
                 android:layout_height="30dp"
                 android:text="菜名"
@@ -19,14 +21,16 @@
 
         <TextView
                 android:id="@+id/price"
-                android:layout_width="40dip"
+                android:gravity="center"
+                android:layout_width="100dip"
                 android:layout_height="30dp"
                 android:text="单价"
                 android:textSize="20sp" />
 
         <TextView
                 android:id="@+id/count"
-                android:layout_width="40dip"
+                android:gravity="center"
+                android:layout_width="100dip"
                 android:layout_height="30dp"
                 android:text="数量"
                 android:textSize="20sp" />
@@ -39,4 +43,4 @@
             android:layout_height="wrap_content" >
     </ListView>
 
-</LinearLayout> 
+</LinearLayout>

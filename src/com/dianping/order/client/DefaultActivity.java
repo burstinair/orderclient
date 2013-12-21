@@ -20,6 +20,7 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
 
     private static final int REQUEST_CODE_CAMERA = 10;
     private static final int REQUEST_CODE_RESOLVE = 20;
+    private static final int REQUEST_CODE_DISHMENU = 30;
 
     /**
      * Called when the activity is first created.
@@ -42,8 +43,10 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
                 byte[] result = (byte[]) data.getExtras().get("data");
                 HttpHelper.resolve(this, REQUEST_CODE_RESOLVE, result);
 
-                Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
-                findViewById(R.id.rootli).setBackground(new BitmapDrawable(getResources(), Blur.BoxBlurFilter(bitmap)));
+                Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
+                intent.putExtra("data",result);
+
+                startActivityForResult(intent,REQUEST_CODE_DISHMENU);
             }
         }
     }
