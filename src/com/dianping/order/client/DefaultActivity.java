@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -47,6 +44,15 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
         SurfaceView cameraView = (SurfaceView) findViewById(R.id.cameraView);
         cameraView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         cameraView.getHolder().addCallback(this);
+
+        for(int i = 0, l = Camera.getNumberOfCameras(); i < l; ++i) {
+            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, cameraInfo);
+            if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                cameraId = i;
+                break;
+            }
+        }
     }
 
     @Override
@@ -61,7 +67,50 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
     @Override
     public void onResume() {
         try {
-            camera = Camera.open();
+            camera = Camera.open(cameraId);
+            Display display = getWindowManager().getDefaultDisplay();
+
+            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+            Camera.getCameraInfo(cameraId, cameraInfo);
+            int orientation = 0;
+            switch (display.getRotation()) {
+                case Surface.ROTATION_0:
+                    orientation = 0;
+                    break;
+                case Surface.ROTATION_90:
+                    orientation = 90;
+                    break;
+                case Surface.ROTATION_180:
+                    orientation = 180;
+                    break;
+                case Surface.ROTATION_270:
+                    orientation = 270;
+                    break;
+            }
+            orientation = (orientation + cameraInfo.orientation) % 360;
+            //orientation = (360 - orientation) % 360;
+            camera.setDisplayOrientation(orientation);
+
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setRotation(orientation);
+            Camera.Size minSize = null;
+            List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
+            List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
+            if(previewSizes != null) {
+                for(Camera.Size size : previewSizes) {
+                    int minDim = size.width < size.height ? size.width : size.height;
+                    if(minDim >= 768 && pictureSizes.contains(size)) {
+                        if(minSize == null || size.width < minSize.width) {
+                            minSize = size;
+                        }
+                    }
+                }
+            }
+            if(minSize != null) {
+                parameters.setPreviewSize(minSize.width, minSize.height);
+                parameters.setPictureSize(minSize.width, minSize.height);
+            }
+            camera.setParameters(parameters);
         } catch (Throwable ex) {
             ex.printStackTrace();
             Toast.makeText(this, "打开相机失败 " + ex, Toast.LENGTH_LONG).show();
@@ -69,6 +118,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
         super.onResume();
     }
 
+    private int cameraId;
     private Camera camera;
 
     @Override
