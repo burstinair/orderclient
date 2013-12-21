@@ -8,12 +8,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -116,18 +118,15 @@ public class HttpHelper extends AsyncTask<Void, Void, byte[]> {
         this.callback = callback;
     }
 
-    public static void rec(HttpCallback<JSONTokener> callback) {
-        HttpUriRequest request = new HttpGet(buildUri("/api/rec?a=34&b=56"));
-        new HttpHelper(request, callback).executeOnExecutor(EXECUTOR);
-    }
-
     public static void resolve(final HttpCallback<List<DishMenu>> callback, byte[] photo) {
         HttpPost request = new HttpPost(buildUri("/api/resolve"));
         request.setEntity(new ByteArrayEntity(photo));
         new HttpHelper(request, new HttpCallback<JSONTokener>() {
             @Override
-            public void handle(JSONTokener result) {
-                callback.handle(/* TODO */null);
+            public void handle(JSONTokener raw) {
+                List<DishMenu> result = new ArrayList<DishMenu>();
+                //TODO
+                callback.handle(result);
             }
         }).executeOnExecutor(EXECUTOR);
     }

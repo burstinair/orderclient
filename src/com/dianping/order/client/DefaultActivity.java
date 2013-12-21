@@ -9,12 +9,18 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * @author zhongkai.zhao
  *         13-12-20 下午10:26
  */
 public class DefaultActivity extends Activity implements SurfaceHolder.Callback, HttpHelper.HttpCallback<List<DishMenu>> {
+
+    private static DefaultActivity INSTANCE;
+    public static DefaultActivity getInstance() {
+        return INSTANCE;
+    }
 
     public void onClick(View view) {
         camera.takePicture(null, null, new Camera.PictureCallback() {
@@ -30,13 +36,34 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
         });
     }
 
+    private static final int TIMEOUT = 20000;
+
+    private List<DishMenu> resolveResult;
+    public List<DishMenu> getResolveResult() {
+        int wait = 0, interval = 100;
+        while(resolveResult == null && wait < TIMEOUT) {
+            try {
+                wait += interval;
+                Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        List<DishMenu> result =  resolveResult;
+        resolveResult = null;
+        return result;
+    }
+
     @Override
     public void handle(List<DishMenu> result) {
-        //TODO
+        resolveResult = result;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        INSTANCE = this;
+
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
