@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.json.JSONTokener;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +25,7 @@ import java.util.concurrent.Executors;
  * @author zhongkai.zhao
  *         13-12-21 上午12:32
  */
-public class HttpHelper extends AsyncTask<Void, Void, HttpResponse> {
+public class HttpHelper extends AsyncTask<Void, Void, byte[]> {
 
     private static final Executor EXECUTOR = Executors.newCachedThreadPool();
 
@@ -34,11 +35,11 @@ public class HttpHelper extends AsyncTask<Void, Void, HttpResponse> {
     }
 
     @Override
-    protected HttpResponse doInBackground(Void... voids) {
+    protected byte[] doInBackground(Void... voids) {
         try {
             HttpClient httpClient = AndroidHttpClient.newInstance(USER_AGENT);
             HttpHost httpHost = new HttpHost(HOST_NAME, HOST_PORT);
-            return httpClient.execute(httpHost, request);
+            return readFully(httpClient.execute(httpHost, request).getEntity().getContent());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,9 +47,10 @@ public class HttpHelper extends AsyncTask<Void, Void, HttpResponse> {
     }
 
     @Override
-    protected void onPostExecute(HttpResponse response) {
+    protected void onPostExecute(byte[] response) {
         try {
-            callback.handle(new JSONTokener(readFully(response.getEntity().getContent())), requestCode);
+            String resultString = new String(response, "UTF-8");
+            callback.handle(new JSONTokener(resultString), requestCode);
         } catch (Throwable e) {
             e.printStackTrace();
             callback.handle(null, requestCode);
@@ -81,19 +83,22 @@ public class HttpHelper extends AsyncTask<Void, Void, HttpResponse> {
         HOST_PORT = Integer.parseInt(properties.getProperty("hostPort"));
     }
 
-    private static String readFully(InputStream inputStream) throws IOException {
+    private static byte[] readFully(InputStream inputStream) throws IOException {
+        inputStream = new BufferedInputStream(inputStream);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length = 0;
         try {
-            while ((length = inputStream.read(buffer)) == 1024) {
+            while ((length = inputStream.read(buffer)) != -1) {
                 byteArrayOutputStream.write(buffer, 0, length);
             }
-        } catch (Throwable ex) { }
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
         if(length > 0) {
             byteArrayOutputStream.write(buffer, 0, length);
         }
-        return new String(byteArrayOutputStream.toByteArray(), "UTF-8");
+        return byteArrayOutputStream.toByteArray();
     }
 
     public static String buildUri(String path) {

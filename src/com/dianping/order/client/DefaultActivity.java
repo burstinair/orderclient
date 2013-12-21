@@ -10,7 +10,9 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
-public class DefaultActivity extends Activity implements HttpHelper.HttpCallback<JSONTokener> {
+import java.util.List;
+
+public class DefaultActivity extends Activity implements HttpHelper.HttpCallback<List<DishMenu>> {
 
     private static final int REQUEST_CODE_CAMERA = 10;
     private static final int REQUEST_CODE_RESOLVE = 20;
@@ -25,10 +27,8 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
     }
 
     public void onClick(View view) {
-        //FIXME
-        HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
-        //Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
-        //startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
+        Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
+        startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
     }
 
     @Override
@@ -36,15 +36,15 @@ public class DefaultActivity extends Activity implements HttpHelper.HttpCallback
         if(resultCode == RESULT_OK) {
             if(requestCode == REQUEST_CODE_CAMERA) {
                 byte[] result = (byte[]) data.getExtras().get("data");
-                Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
+                HttpHelper.resolve(this, REQUEST_CODE_RESOLVE, result);
                 //TODO
-                HttpHelper.rec(this, REQUEST_CODE_RESOLVE);
+                //Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
             }
         }
     }
 
     @Override
-    public void handle(JSONTokener result, int requestCode) {
-        Toast.makeText(this, result.toString(), Toast.LENGTH_SHORT).show();
+    public void handle(List<DishMenu> result, int requestCode) {
+        Toast.makeText(this, "suc", Toast.LENGTH_SHORT);
     }
 }
