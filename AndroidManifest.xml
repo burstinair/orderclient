@@ -16,13 +16,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity" android:theme="@style/DianPingTheme"
-                  android:label="拍菜单">
-            <intent-filter>
-                <action android:name="com.dianping.order.client.intent.CAMERA" />
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
         <activity android:name=".DishMenuActivity"
                   android:label="电子菜单">
             <intent-filter>

@@ -2,57 +2,87 @@ package com.dianping.order.client;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.hardware.Camera;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
+import android.view.*;
 import android.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONTokener;
-import android.widget.ImageView;
 
+import java.io.IOException;
 import java.util.List;
 
-public class DefaultActivity extends Activity implements HttpHelper.HttpCallback<List<DishMenu>> {
+/**
+ * @author zhongkai.zhao
+ *         13-12-20 下午10:26
+ */
+public class DefaultActivity extends Activity implements SurfaceHolder.Callback, HttpHelper.HttpCallback<List<DishMenu>> {
 
-    private static final int REQUEST_CODE_CAMERA = 10;
-    private static final int REQUEST_CODE_RESOLVE = 20;
-    private static final int REQUEST_CODE_DISHMENU = 30;
+    public void onClick(View view) {
+        camera.takePicture(null, null, new Camera.PictureCallback() {
+            @Override
+            public void onPictureTaken(byte[] bytes, Camera camera) {
+                HttpHelper.resolve(DefaultActivity.this, bytes);
 
-    /**
-     * Called when the activity is first created.
-     */
+                Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
+                intent.putExtra("data", bytes);
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void handle(List<DishMenu> result) {
+        //TODO
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-    }
 
-    public void onClick(View view) {
-        Intent cameraIntent = new Intent(getString(R.string.ACTION_CAMERA));
-        startActivityForResult(cameraIntent, REQUEST_CODE_CAMERA);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.main);
+        SurfaceView cameraView = (SurfaceView) findViewById(R.id.cameraView);
+        cameraView.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        cameraView.getHolder().addCallback(this);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == RESULT_OK) {
-            if(requestCode == REQUEST_CODE_CAMERA) {
-                byte[] result = (byte[]) data.getExtras().get("data");
-                HttpHelper.resolve(this, REQUEST_CODE_RESOLVE, result);
+    public void onPause() {
+        if(camera != null) {
+            camera.stopPreview();
+            camera.release();
+        }
+        super.onPause();
+    }
 
-                Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
-                intent.putExtra("data",result);
+    @Override
+    public void onResume() {
+        try {
+            camera = Camera.open();
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+            Toast.makeText(this, "打开相机失败 " + ex, Toast.LENGTH_LONG).show();
+        }
+        super.onResume();
+    }
 
-                startActivityForResult(intent,REQUEST_CODE_DISHMENU);
+    private Camera camera;
+
+    @Override
+    public void surfaceCreated(SurfaceHolder surfaceHolder) {
+        try {
+            if(camera != null) {
+                camera.setPreviewDisplay(surfaceHolder);
+                camera.startPreview();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    public void handle(List<DishMenu> result, int requestCode) {
-        Toast.makeText(this, "suc", Toast.LENGTH_SHORT).show();
-    }
+    public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) { }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder) { }
 }

@@ -49,20 +49,19 @@ public class HttpHelper extends AsyncTask<Void, Void, byte[]> {
     protected void onPostExecute(byte[] response) {
         try {
             String resultString = new String(response, "UTF-8");
-            callback.handle(new JSONTokener(resultString), requestCode);
+            callback.handle(new JSONTokener(resultString));
         } catch (Throwable e) {
             e.printStackTrace();
-            callback.handle(null, requestCode);
+            callback.handle(null);
         }
         request = null;
         callback = null;
-        requestCode = 0;
         super.onPostExecute(response);
         cancel(true);
     }
 
     public interface HttpCallback<T> {
-        void handle(T result, int requestCode);
+        void handle(T result);
     }
 
     private static final String USER_AGENT;
@@ -106,33 +105,31 @@ public class HttpHelper extends AsyncTask<Void, Void, byte[]> {
 
     private HttpUriRequest request;
     private HttpCallback<JSONTokener> callback;
-    private int requestCode;
 
-    public HttpHelper(HttpUriRequest request, HttpCallback<JSONTokener> callback, int requestCode) {
+    public HttpHelper(HttpUriRequest request, HttpCallback<JSONTokener> callback) {
         this.request = request;
         this.callback = callback;
-        this.requestCode = requestCode;
     }
 
-    public static void rec(HttpCallback<JSONTokener> callback, int requestCode) {
+    public static void rec(HttpCallback<JSONTokener> callback) {
         HttpUriRequest request = new HttpGet(buildUri("/api/rec?a=34&b=56"));
-        new HttpHelper(request, callback, requestCode).executeOnExecutor(EXECUTOR);
+        new HttpHelper(request, callback).executeOnExecutor(EXECUTOR);
     }
 
-    public static void resolve(final HttpCallback<List<DishMenu>> callback, int requestCode, byte[] photo) {
+    public static void resolve(final HttpCallback<List<DishMenu>> callback, byte[] photo) {
         HttpPost request = new HttpPost(buildUri("/api/resolve"));
         request.setEntity(new ByteArrayEntity(photo));
         new HttpHelper(request, new HttpCallback<JSONTokener>() {
             @Override
-            public void handle(JSONTokener result, int requestCode) {
-                callback.handle(/* TODO */null, requestCode);
+            public void handle(JSONTokener result) {
+                callback.handle(/* TODO */null);
             }
-        }, requestCode).executeOnExecutor(EXECUTOR);
+        }).executeOnExecutor(EXECUTOR);
     }
 
     public static void submit(final HttpCallback<JSONTokener> callback, int requestCode, Map<String, Integer> selectResult) {
         HttpUriRequest request = new HttpPost();
         //TODO
-        new HttpHelper(request, callback, requestCode).executeOnExecutor(EXECUTOR);
+        new HttpHelper(request, callback).executeOnExecutor(EXECUTOR);
     }
 }
