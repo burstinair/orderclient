@@ -8,6 +8,17 @@ public class DishMenu {
 
     private String title;
     private double price;
+    private int count = 0;
+
+    public void addCount() {
+        this.count++;
+    }
+
+    public void delCount() {
+        if (this.count > 0) {
+            this.count--;
+        }
+    }
 
     public String getTitle() {
         return title;
@@ -23,5 +34,13 @@ public class DishMenu {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }
