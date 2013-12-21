@@ -25,8 +25,6 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
 
     @Override
     protected HttpResponse doInBackground(String... strings) {
-        HttpResponse response = null;
-        JSONTokener result = null;
         try {
             return HTTP_CLIENT.execute(HTTP_HOST, request);
         } catch (IOException e) {
@@ -39,11 +37,14 @@ public class HttpHelper extends AsyncTask<String, Void, HttpResponse> {
     protected void onPostExecute(HttpResponse response) {
         try {
             callback.handle(new JSONTokener(readFully(response.getEntity().getContent())), requestCode);
-            return;
         } catch (IOException e) {
             e.printStackTrace();
+            callback.handle(null, requestCode);
         }
-        callback.handle(null, requestCode);
+        request = null;
+        callback = null;
+        requestCode = 0;
+        cancel(true);
     }
 
     public interface HttpCallback<T> {
