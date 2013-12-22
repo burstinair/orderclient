@@ -14,7 +14,7 @@ import java.util.List;
  * @author zhongkai.zhao
  *         13-12-20 下午10:26
  */
-public class DefaultActivity extends Activity implements SurfaceHolder.Callback, HttpHelper.HttpCallback<List<DishMenu>> {
+public class DefaultActivity extends Activity implements SurfaceHolder.Callback, Callback<List<DishMenu>> {
 
     private static DefaultActivity INSTANCE;
     public static DefaultActivity getInstance() {
