@@ -23,16 +23,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DefaultActivity extends Activity implements SurfaceHolder.Callback, Callback<ResolveResult> {
 
-    private AtomicBoolean isInProgress;
+    private AtomicBoolean inProgress;
     private ProgressDialog progressDialog;
     private Cancelable progress;
 
     public void onClick(View view) {
-        if(isInProgress.compareAndSet(false, true)) {
-            camera.stopPreview();
+        if(inProgress.compareAndSet(false, true)) {
             camera.takePicture(null, null, new Camera.PictureCallback() {
                 @Override
                 public void onPictureTaken(byte[] bytes, Camera camera) {
+
+                    camera.stopPreview();
 
                     progressDialog = new ProgressDialog(DefaultActivity.this);
                     progressDialog.setTitle(getString(R.string.waiting));
@@ -58,13 +59,12 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
     public void handle(final ResolveResult result, ResultStatus resultStatus) {
         progressDialog.cancel();
         progressDialog = null;
-        isInProgress.set(false);
+        inProgress.set(false);
         progress = null;
         if(resultStatus == ResultStatus.SUCCESS) {
             Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
             intent.putExtra("result", result);
             startActivity(intent);
-            finish();
             //overridePendingTransition(android.R.anim.slide_out_right, 0);
         } else {
             if(resultStatus != ResultStatus.CANCELED) {
@@ -92,7 +92,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
             }
         }
 
-        isInProgress = new AtomicBoolean(false);
+        inProgress = new AtomicBoolean(false);
     }
 
     @Override
