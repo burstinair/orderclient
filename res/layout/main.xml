@@ -5,18 +5,17 @@
     <SurfaceView
             android:id="@+id/cameraView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-    </SurfaceView>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:background="@android:color/transparent"
-                    android:paddingTop="30dip"
-                    android:paddingBottom="30dip"
-                    android:paddingLeft="30dip"
-                    android:paddingRight="30dip"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent">
+            android:layout_height="match_parent" />
+    <RelativeLayout
+            android:background="@android:color/transparent"
+            android:paddingTop="30dip"
+            android:paddingBottom="30dip"
+            android:paddingLeft="30dip"
+            android:paddingRight="30dip"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
         <ImageView
                 android:layout_marginBottom="80dip"
                 android:layout_height="match_parent"

@@ -64,6 +64,8 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
             Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
             intent.putExtra("result", result);
             startActivity(intent);
+            finish();
+            //overridePendingTransition(android.R.anim.slide_out_right, 0);
         } else {
             if(resultStatus != ResultStatus.CANCELED) {
                 Toast.makeText(this, getString(R.string.networkError), Toast.LENGTH_LONG).show();
