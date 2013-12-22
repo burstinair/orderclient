@@ -1,8 +1,6 @@
 package com.dianping.order.client;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -25,7 +23,6 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.dianping.order.client.framework.Blur;
 
 /**
  * @author zhongkai.zhao
@@ -51,9 +48,8 @@ public class DishMenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test);
 
-        byte[] result = getIntent().getByteArrayExtra("data");
-        Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0, result.length);
-        findViewById(R.id.listView1).setBackground(new BitmapDrawable(getResources(), Blur.BoxBlurFilter(bitmap)));
+        APIUse.ResolveResult result = getIntent().getParcelableExtra("result");
+        findViewById(R.id.listView1).setBackground(new BitmapDrawable(getResources(), result.getFilteredBitmap()));
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.linerlayout1);
         ll.setBackgroundColor(Color.parseColor("#ff9c00"));
@@ -106,7 +102,7 @@ public class DishMenuActivity extends Activity {
         tv2.setWidth(w * part[1]);
         tv3.setWidth(w * part[2]);
 
-        initData();
+        initData(result.getDishMenuList());
 
         listview = (ListView) findViewById(R.id.listView1);  //
         mAdapter = new mBaseAdapter();
@@ -116,10 +112,9 @@ public class DishMenuActivity extends Activity {
     }
 
     //初始化listView要用到的数据
-    public void initData() {
+    public void initData(List<DishMenu> dishMenus) {
         listData = new ArrayList<Map<String, String>>();
 
-        List<DishMenu> dishMenus = DefaultActivity.getInstance().getResolveResult();
         for (DishMenu dishMenu : dishMenus) {
             map = new HashMap<String, String>();
             map.put("test1", dishMenu.getName());

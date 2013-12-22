@@ -1,69 +1,79 @@
 package com.dianping.order.client;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.widget.Toast;
 import com.dianping.order.client.framework.Callback;
+import com.dianping.order.client.framework.Cancelable;
+import com.dianping.order.client.framework.ResultStatus;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author zhongkai.zhao
  *         13-12-20 下午10:26
  */
-public class DefaultActivity extends Activity implements SurfaceHolder.Callback, Callback<List<DishMenu>> {
+public class DefaultActivity extends Activity implements SurfaceHolder.Callback, Callback<APIUse.ResolveResult> {
 
-    private static DefaultActivity INSTANCE;
-    public static DefaultActivity getInstance() {
-        return INSTANCE;
-    }
+    private AtomicBoolean isInProgress;
+    private ProgressDialog progressDialog;
+    private Cancelable progress;
 
     public void onClick(View view) {
-        camera.takePicture(null, null, new Camera.PictureCallback() {
-            @Override
-            public void onPictureTaken(byte[] bytes, Camera camera) {
-                APIUse.resolve(DefaultActivity.this, bytes);
+        if(isInProgress.compareAndSet(false, true)) {
+            camera.stopPreview();
+            camera.takePicture(null, null, new Camera.PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] bytes, Camera camera) {
 
-                Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
-                intent.putExtra("data", bytes);
+                    progressDialog = new ProgressDialog(DefaultActivity.this);
+                    progressDialog.setTitle("请稍后...");
+                    progressDialog.setMessage("请稍后...");
+                    progressDialog.setCancelable(true);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progress.cancel();
+                        }
+                    });
+                    progressDialog.show();
 
-                startActivity(intent);
-            }
-        });
-    }
-
-    private static final int TIMEOUT = 20000;
-
-    private List<DishMenu> resolveResult;
-    public List<DishMenu> getResolveResult() {
-        int wait = 0, interval = 100;
-        while(resolveResult == null && wait < TIMEOUT) {
-            try {
-                wait += interval;
-                Thread.sleep(interval);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                    progress = APIUse.resolve(DefaultActivity.this, bytes);
+                }
+            });
         }
-        List<DishMenu> result =  resolveResult;
-        resolveResult = null;
-        return result;
     }
 
     @Override
-    public void handle(List<DishMenu> result) {
-        resolveResult = result;
+    public void handle(final APIUse.ResolveResult result, ResultStatus resultStatus) {
+        progressDialog.cancel();
+        progressDialog = null;
+        isInProgress.set(false);
+        progress = null;
+        if(resultStatus == ResultStatus.SUCCESS) {
+            Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
+            intent.putExtra("result", result);
+            startActivity(intent);
+        } else {
+            if(resultStatus != ResultStatus.CANCELED) {
+                Toast.makeText(this, "网络不给力", Toast.LENGTH_LONG).show();
+            }
+            camera.startPreview();
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        INSTANCE = this;
-
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -79,6 +89,8 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
                 break;
             }
         }
+
+        isInProgress = new AtomicBoolean(false);
     }
 
     @Override
@@ -151,7 +163,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
             }
             camera.setParameters(parameters);
         } catch (Throwable ex) {
-            ex.printStackTrace();
+            Log.w("DefaultActivity.onResume", ex);
             Toast.makeText(this, "打开相机失败 " + ex, Toast.LENGTH_LONG).show();
         }
         super.onResume();
@@ -167,8 +179,8 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
                 camera.setPreviewDisplay(surfaceHolder);
                 camera.startPreview();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            Log.w("DefaultActivity.surfaceCreated", ex);
         }
     }
 

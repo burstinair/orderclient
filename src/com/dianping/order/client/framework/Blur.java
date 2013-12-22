@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable;
  * Date: 13-12-20
  * Time: 23:48
  */
-public class Blur extends Task<Drawable> {
+public class Blur extends Task<Bitmap> {
 
     private byte[] jpgRaw;
 
@@ -20,12 +20,12 @@ public class Blur extends Task<Drawable> {
     }
 
     @Override
-    protected Drawable doInBackground() {
+    protected Bitmap doInBackground() {
         Bitmap raw = BitmapFactory.decodeByteArray(jpgRaw, 0, jpgRaw.length);
         jpgRaw = null;
         Bitmap result = BoxBlurFilter(raw);
         raw.recycle();
-        return new BitmapDrawable(Resources.getSystem(), result);
+        return result;
     }
 
 //    private static final int n = 10;
