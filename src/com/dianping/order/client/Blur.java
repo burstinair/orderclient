@@ -1,13 +1,32 @@
 package com.dianping.order.client;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 /**
  * User: NimbuS
  * Date: 13-12-20
  * Time: 23:48
  */
-public class Blur {
+public class Blur extends Task<Drawable> {
+
+    private byte[] jpgRaw;
+
+    public Blur(byte[] jpgRaw) {
+        this.jpgRaw = jpgRaw;
+    }
+
+    @Override
+    protected Drawable doInBackground() {
+        Bitmap raw = BitmapFactory.decodeByteArray(jpgRaw, 0, jpgRaw.length);
+        jpgRaw = null;
+        Bitmap result = BoxBlurFilter(raw);
+        raw.recycle();
+        return new BitmapDrawable(Resources.getSystem(), result);
+    }
 
 //    private static final int n = 10;
 //    private static final double sigma = 10;

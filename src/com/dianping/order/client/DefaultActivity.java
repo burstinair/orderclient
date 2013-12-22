@@ -119,7 +119,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
 
             Camera.Parameters parameters = camera.getParameters();
             parameters.setRotation(orientation);
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             Camera.Size minSize = null;
             List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
             List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
