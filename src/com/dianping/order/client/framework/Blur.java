@@ -1,10 +1,11 @@
-package com.dianping.order.client;
+package com.dianping.order.client.framework;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import com.dianping.order.client.framework.Task;
 
 /**
  * User: NimbuS

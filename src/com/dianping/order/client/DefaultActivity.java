@@ -6,6 +6,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.Toast;
+import com.dianping.order.client.framework.Callback;
 
 import java.io.IOException;
 import java.util.List;

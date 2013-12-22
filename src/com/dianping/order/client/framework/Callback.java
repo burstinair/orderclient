@@ -1,4 +1,4 @@
-package com.dianping.order.client;
+package com.dianping.order.client.framework;
 
 /**
  * @author Burst

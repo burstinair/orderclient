@@ -1,5 +1,7 @@
 package com.dianping.order.client;
 
+import com.dianping.order.client.framework.Callback;
+import com.dianping.order.client.framework.HttpHelper;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;

@@ -1,6 +1,7 @@
-package com.dianping.order.client;
+package com.dianping.order.client.framework;
 
 import android.net.http.AndroidHttpClient;
+import com.dianping.order.client.BuildConfig;
 import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
