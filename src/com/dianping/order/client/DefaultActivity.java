@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * @author zhongkai.zhao
@@ -120,6 +119,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
 
             Camera.Parameters parameters = camera.getParameters();
             parameters.setRotation(orientation);
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             Camera.Size minSize = null;
             List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
             List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
