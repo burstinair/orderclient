@@ -73,8 +73,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
         cameraView.getHolder().addCallback(this);
 
         for(int i = 0, l = Camera.getNumberOfCameras(); i < l; ++i) {
-            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, cameraInfo);
+            Camera.CameraInfo cameraInfo = getCameraInfo(i);
             if(cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 cameraId = i;
                 break;
@@ -91,52 +90,64 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
         super.onPause();
     }
 
+    private Camera.CameraInfo getCameraInfo(int cameraId) {
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraId, cameraInfo);
+        return cameraInfo;
+    }
+
+    private int getOrientation(int rotation, int cameraOrientation) {
+        int orientation = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                orientation = 0;
+                break;
+            case Surface.ROTATION_90:
+                orientation = 90;
+                break;
+            case Surface.ROTATION_180:
+                orientation =  180;
+                break;
+            case Surface.ROTATION_270:
+                orientation = 270;
+                break;
+        }
+        orientation = (orientation + cameraOrientation) % 360;
+        return orientation;
+    }
+
+    private Camera.Size getSize(List<Camera.Size> supportedPreviewSizes, List<Camera.Size> supportedPictureSizes) {
+        Camera.Size minSize = null;
+        if(supportedPreviewSizes != null) {
+            for(Camera.Size size : supportedPreviewSizes) {
+                int minDim = size.width < size.height ? size.width : size.height;
+                if(minDim >= 768 && supportedPictureSizes.contains(size)) {
+                    if(minSize == null || size.width < minSize.width) {
+                        minSize = size;
+                    }
+                }
+            }
+        }
+        return minSize;
+    }
+
     @Override
     public void onResume() {
         try {
             camera = Camera.open(cameraId);
+            Camera.CameraInfo cameraInfo = getCameraInfo(cameraId);
             Display display = getWindowManager().getDefaultDisplay();
 
-            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-            Camera.getCameraInfo(cameraId, cameraInfo);
-            int orientation = 0;
-            switch (display.getRotation()) {
-                case Surface.ROTATION_0:
-                    orientation = 0;
-                    break;
-                case Surface.ROTATION_90:
-                    orientation = 90;
-                    break;
-                case Surface.ROTATION_180:
-                    orientation = 180;
-                    break;
-                case Surface.ROTATION_270:
-                    orientation = 270;
-                    break;
-            }
-            orientation = (orientation + cameraInfo.orientation) % 360;
-            //orientation = (360 - orientation) % 360;
+            int orientation = getOrientation(display.getRotation(), cameraInfo.orientation);
             camera.setDisplayOrientation(orientation);
 
             Camera.Parameters parameters = camera.getParameters();
             parameters.setRotation(orientation);
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-            Camera.Size minSize = null;
-            List<Camera.Size> previewSizes = parameters.getSupportedPreviewSizes();
-            List<Camera.Size> pictureSizes = parameters.getSupportedPictureSizes();
-            if(previewSizes != null) {
-                for(Camera.Size size : previewSizes) {
-                    int minDim = size.width < size.height ? size.width : size.height;
-                    if(minDim >= 768 && pictureSizes.contains(size)) {
-                        if(minSize == null || size.width < minSize.width) {
-                            minSize = size;
-                        }
-                    }
-                }
-            }
-            if(minSize != null) {
-                parameters.setPreviewSize(minSize.width, minSize.height);
-                parameters.setPictureSize(minSize.width, minSize.height);
+            Camera.Size size = getSize(parameters.getSupportedPreviewSizes(), parameters.getSupportedPictureSizes());
+            if(size != null) {
+                parameters.setPreviewSize(size.width, size.height);
+                parameters.setPictureSize(size.width, size.height);
             }
             camera.setParameters(parameters);
         } catch (Throwable ex) {
