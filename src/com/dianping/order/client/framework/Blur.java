@@ -6,12 +6,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * User: NimbuS
  * Date: 13-12-20
  * Time: 23:48
  */
-public class Blur extends Task<Bitmap> {
+public class Blur extends Task<byte[]> {
 
     private byte[] jpgRaw;
 
@@ -20,11 +23,20 @@ public class Blur extends Task<Bitmap> {
     }
 
     @Override
-    protected Bitmap doInBackground() {
+    protected byte[] doInBackground() {
         Bitmap raw = BitmapFactory.decodeByteArray(jpgRaw, 0, jpgRaw.length);
         jpgRaw = null;
-        Bitmap result = BoxBlurFilter(raw);
+        Bitmap filtered = BoxBlurFilter(raw);
         raw.recycle();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        filtered.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+        filtered.recycle();
+        byte[] result = baos.toByteArray();
+        try {
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 

@@ -1,6 +1,8 @@
 package com.dianping.order.client;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -48,8 +50,9 @@ public class DishMenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test);
 
-        APIUse.ResolveResult result = getIntent().getParcelableExtra("result");
-        findViewById(R.id.listView1).setBackground(new BitmapDrawable(getResources(), result.getFilteredBitmap()));
+        ResolveResult result = getIntent().getParcelableExtra("result");
+        Bitmap filteredBackground = BitmapFactory.decodeByteArray(result.getFilteredImage(), 0, result.getFilteredImage().length);
+        findViewById(R.id.listView1).setBackground(new BitmapDrawable(getResources(), filteredBackground));
 
         LinearLayout ll = (LinearLayout) findViewById(R.id.linerlayout1);
         ll.setBackgroundColor(Color.parseColor("#ff9c00"));

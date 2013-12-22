@@ -5,4 +5,8 @@
     <string name="orderSubmit">提交订单</string>
     <string name="startTake">点击按钮开始拍</string>
     <string name="take">拍</string>
+    <string name="waiting">请稍后…</string>
+    <string name="cancel">取消</string>
+    <string name="networkError">网络不给力</string>
+    <string name="cameraError">打开相机失败</string>
 </resources>

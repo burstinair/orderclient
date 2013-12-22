@@ -1,9 +1,5 @@
 package com.dianping.order.client;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 import com.dianping.order.client.framework.*;
 import org.apache.http.client.methods.HttpPost;
@@ -22,58 +18,6 @@ import java.util.List;
 public final class APIUse {
 
     private APIUse() { }
-
-    public static class ResolveResult implements Parcelable {
-        private List<DishMenu> dishMenuList;
-        private Bitmap filteredBitmap;
-
-        public List<DishMenu> getDishMenuList() {
-            return dishMenuList;
-        }
-
-        public void setDishMenuList(List<DishMenu> dishMenuList) {
-            this.dishMenuList = dishMenuList;
-        }
-
-        public Bitmap getFilteredBitmap() {
-            return filteredBitmap;
-        }
-
-        public void setFilteredBitmap(Bitmap filteredBitmap) {
-            this.filteredBitmap = filteredBitmap;
-        }
-
-        public ResolveResult() { }
-
-        public ResolveResult(Parcel parcel) {
-            this.dishMenuList = new ArrayList<DishMenu>();
-            parcel.readTypedList(this.dishMenuList, DishMenu.CREATOR);
-            parcel.readParcelable(Drawable.class.getClassLoader());
-        }
-
-        public static final Creator<ResolveResult> CREATOR = new Creator<ResolveResult>() {
-            @Override
-            public ResolveResult createFromParcel(Parcel source) {
-                return new ResolveResult(source);
-            }
-
-            @Override
-            public ResolveResult[] newArray(int size) {
-                return new ResolveResult[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeTypedList(dishMenuList);
-            dest.writeParcelable(filteredBitmap, flags);
-        }
-    }
 
     public static Cancelable resolve(final Callback<ResolveResult> callback, byte[] photo) {
         HttpPost request = new HttpPost(HttpHelper.buildUri("/api/resolve"));
@@ -112,7 +56,7 @@ public final class APIUse {
                 if(resultStatus == ResultStatus.SUCCESS) {
                     ResolveResult resolveResult = new ResolveResult();
                     resolveResult.setDishMenuList((List<DishMenu>) result.get(0));
-                    resolveResult.setFilteredBitmap((Bitmap) result.get(1));
+                    resolveResult.setFilteredImage((byte[]) result.get(1));
                     callback.handle(resolveResult, resultStatus);
                 } else {
                     callback.handle(null, resultStatus);

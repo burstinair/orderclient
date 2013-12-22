@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author zhongkai.zhao
  *         13-12-20 下午10:26
  */
-public class DefaultActivity extends Activity implements SurfaceHolder.Callback, Callback<APIUse.ResolveResult> {
+public class DefaultActivity extends Activity implements SurfaceHolder.Callback, Callback<ResolveResult> {
 
     private AtomicBoolean isInProgress;
     private ProgressDialog progressDialog;
@@ -35,12 +35,12 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
                 public void onPictureTaken(byte[] bytes, Camera camera) {
 
                     progressDialog = new ProgressDialog(DefaultActivity.this);
-                    progressDialog.setTitle("请稍后...");
-                    progressDialog.setMessage("请稍后...");
+                    progressDialog.setTitle(getString(R.string.waiting));
+                    progressDialog.setMessage(getString(R.string.waiting));
                     progressDialog.setCancelable(true);
                     progressDialog.setIndeterminate(true);
                     progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消", new DialogInterface.OnClickListener() {
+                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             progress.cancel();
@@ -55,7 +55,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
     }
 
     @Override
-    public void handle(final APIUse.ResolveResult result, ResultStatus resultStatus) {
+    public void handle(final ResolveResult result, ResultStatus resultStatus) {
         progressDialog.cancel();
         progressDialog = null;
         isInProgress.set(false);
@@ -66,7 +66,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
             startActivity(intent);
         } else {
             if(resultStatus != ResultStatus.CANCELED) {
-                Toast.makeText(this, "网络不给力", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.networkError), Toast.LENGTH_LONG).show();
             }
             camera.startPreview();
         }
@@ -164,7 +164,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
             camera.setParameters(parameters);
         } catch (Throwable ex) {
             Log.w("DefaultActivity.onResume", ex);
-            Toast.makeText(this, "打开相机失败 " + ex, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.cameraError) + ex, Toast.LENGTH_LONG).show();
         }
         super.onResume();
     }
