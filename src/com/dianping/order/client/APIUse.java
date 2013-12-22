@@ -69,18 +69,25 @@ public final class APIUse {
     public static Cancelable submit(final Callback<String> callback, List<DishMenu> selectResult) {
         HttpPost request = new HttpPost(HttpHelper.buildUri("/api/submit"));
         try {
-            JSONArray parameter = new JSONArray();
+            JSONObject parameters = new JSONObject();
+
+            String deviceId = OrderClientApplication.getDeviceId();
+            if(deviceId == null) {
+                deviceId = "";
+            }
+            parameters.put("deviceId", deviceId);
+
+            JSONArray orders = new JSONArray();
             for(DishMenu dishMenu : selectResult) {
                 JSONObject dishMenuParam = new JSONObject();
                 dishMenuParam.put("id", dishMenu.getId());
                 dishMenuParam.put("name", dishMenu.getName());
                 dishMenuParam.put("count", dishMenu.getCount());
-                parameter.put(dishMenuParam);
+                orders.put(dishMenuParam);
             }
-            HttpParams params = request.getParams();
-            params.setParameter("deviceId", OrderClientApplication.getDeviceId());
-            request.setParams(params);
-            request.setEntity(new StringEntity(parameter.toString(), "UTF-8"));
+            parameters.put("orders", orders);
+
+            request.setEntity(new StringEntity(parameters.toString(), "UTF-8"));
         } catch (Throwable ex) {
             Log.w("APIUse.submit", ex);
         }

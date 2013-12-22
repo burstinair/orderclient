@@ -28,7 +28,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
     private Cancelable progress;
 
     public void onClick(View view) {
-        if(inProgress.compareAndSet(false, true)) {
+        if(inProgress.compareAndSet(false, true) && camera != null) {
             camera.takePicture(null, null, new Camera.PictureCallback() {
                 @Override
                 public void onPictureTaken(byte[] bytes, Camera camera) {
