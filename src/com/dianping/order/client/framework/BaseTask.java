@@ -65,9 +65,15 @@ public abstract class BaseTask<RawType, ResultType> extends AsyncTask<Void, Void
 
     @Override
     public void cancel() {
-        setResultStatus(ResultStatus.CANCELED);
-        this.cancel(true);
-        callback.handle(null, ResultStatus.CANCELED);
+        synchronized (this) {
+            if(callback == null) {
+                return;
+            }
+            setResultStatus(ResultStatus.CANCELED);
+            this.cancel(true);
+            callback.handle(null, ResultStatus.CANCELED);
+            callback = null;
+        }
     }
 
     public static Cancelable execute(final Callback<List<Object>> callback, final List<BaseTask> tasks) {

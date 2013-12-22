@@ -35,19 +35,18 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
 
                     camera.stopPreview();
 
-                    progressDialog = new ProgressDialog(DefaultActivity.this);
-                    progressDialog.setTitle(getString(R.string.waiting));
-                    progressDialog.setMessage(getString(R.string.waiting));
-                    progressDialog.setCancelable(true);
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            progress.cancel();
+                    progressDialog = ProgressDialog.show(
+                        DefaultActivity.this,
+                        getString(R.string.waiting), getString(R.string.waiting),
+                        true, true, new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                if(progress != null) {
+                                    progress.cancel();
+                                }
+                            }
                         }
-                    });
-                    progressDialog.show();
+                    );
 
                     progress = APIUse.resolve(DefaultActivity.this, bytes);
                 }
@@ -57,10 +56,10 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
 
     @Override
     public void handle(final ResolveResult result, ResultStatus resultStatus) {
+        progress = null;
         progressDialog.cancel();
         progressDialog = null;
         inProgress.set(false);
-        progress = null;
         if(resultStatus == ResultStatus.SUCCESS) {
             Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
             intent.putExtra("result", result);
