@@ -25,7 +25,7 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
         camera.takePicture(null, null, new Camera.PictureCallback() {
             @Override
             public void onPictureTaken(byte[] bytes, Camera camera) {
-                HttpHelper.resolve(DefaultActivity.this, bytes);
+                APIUse.resolve(DefaultActivity.this, bytes);
 
                 Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
                 intent.putExtra("data", bytes);
