@@ -5,6 +5,7 @@ import com.dianping.order.client.framework.*;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -76,6 +77,9 @@ public final class APIUse {
                 dishMenuParam.put("count", dishMenu.getCount());
                 parameter.put(dishMenuParam);
             }
+            HttpParams params = request.getParams();
+            params.setParameter("deviceId", OrderClientApplication.getDeviceId());
+            request.setParams(params);
             request.setEntity(new StringEntity(parameter.toString(), "UTF-8"));
         } catch (Throwable ex) {
             Log.w("APIUse.submit", ex);

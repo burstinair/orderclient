@@ -61,10 +61,18 @@ public class DefaultActivity extends Activity implements SurfaceHolder.Callback,
         progressDialog = null;
         inProgress.set(false);
         if(resultStatus == ResultStatus.SUCCESS) {
+
+            //FixMe test submit
+            APIUse.submit(new Callback<String>() {
+                @Override
+                public void handle(String result, ResultStatus resultStatus) {
+                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                }
+            }, result.getDishMenuList());
+
             Intent intent = new Intent(getString(R.string.ACTION_DISHMENU));
             intent.putExtra("result", result);
             startActivity(intent);
-            //overridePendingTransition(android.R.anim.slide_out_right, 0);
         } else {
             if(resultStatus != ResultStatus.CANCELED) {
                 Toast.makeText(this, getString(R.string.networkError), Toast.LENGTH_LONG).show();

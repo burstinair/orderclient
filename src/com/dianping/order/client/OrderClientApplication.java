@@ -2,6 +2,7 @@ package com.dianping.order.client;
 
 import android.app.Application;
 import android.content.Context;
+import android.telephony.TelephonyManager;
 
 /**
  * @author Burst
@@ -9,14 +10,23 @@ import android.content.Context;
  */
 public class OrderClientApplication extends Application {
 
-    private static Context CONTEXT;
+    private static Context context;
+
+    private static String deviceId;
 
     public void onCreate(){
         super.onCreate();
-        OrderClientApplication.CONTEXT = getApplicationContext();
+        context = getApplicationContext();
+
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        deviceId = tm.getDeviceId();
     }
 
     public static Context getAppContext() {
-        return OrderClientApplication.CONTEXT;
+        return context;
+    }
+
+    public static String getDeviceId() {
+        return deviceId;
     }
 }
